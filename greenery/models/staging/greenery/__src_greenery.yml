@@ -1,0 +1,22 @@
+version: 2
+
+sources: 
+  - name: src_greenery
+    database: raw
+    schema: public
+
+    tables:
+    - name: addresses
+      description: ""
+    - name: events
+      description: ""
+    - name: orders
+      description: ""
+    - name: order_items
+      description: ""
+    - name: products
+      description: ""
+    - name: promos
+      description: ""
+    - name: users
+      description: ""
