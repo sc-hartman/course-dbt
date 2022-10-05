@@ -3,5 +3,7 @@ WITH order_items AS(
     SELECT * FROM {{ source('src_greenery', 'order_items') }}
 )
 
-SELECT *
+SELECT ORDER_ID AS ORDER_GUID
+       ,PRODUCT_ID AS PRODUCT_GUID
+       ,QUANTITY AS QUANTITY_ORDERED
 FROM order_items
