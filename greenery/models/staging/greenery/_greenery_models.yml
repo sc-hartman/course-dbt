@@ -1,0 +1,17 @@
+version: 2
+
+models:
+  - name: src_addresses
+    description: "A view containing current address information. This links to the address_guid in the src_orders and src_users views."
+  - name: src_events
+    description: "A view containing raw events information. This includes checkouts, packages shipped, items added to cart, and page views."
+  - name: src_order_items
+    description: "A view containing unique order id's, products included with each order and quantity of products purchased."
+  - name: src_orders
+    description: "A view containing the most current information regarding each unique order, including promo id used, cost information, customer/shipping info, status, and delivery estimate(s)."
+  - name: src_products
+    description: "A view containing the most current information regarding Greenery products including product name, current price, and current inventory."
+  - name: src_promos
+    description: "A view containing information about Greenery promotions, what kind of discount is included with the promo and whether or not it is active."
+  - name: src_users
+    description: "A view containing the most current information regarding Greenery users. This includes profile creation date, update time, name, email, link to address_guid, and phone number."
