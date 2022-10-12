@@ -3,7 +3,7 @@ WITH promos AS(
     SELECT * FROM {{ source('src_greenery', 'promos') }}
 )
 
-SELECT PROMO_ID
+SELECT PROMO_ID AS PROMO_TYPE
        ,DISCOUNT AS PROMO_DISCOUNT
        ,STATUS AS PROMO_STATUS
 FROM promos
