@@ -2,7 +2,14 @@
 
 ### Models
 #### What is our user repeat rate?
-- 
+_Repeat Rate = Users who purchased 2 or more times / users who purchased_
+- Repeat rate is approximately 79.8%
+```sql
+SELECT SUM(CASE WHEN ORDERS_PLACED >= 2 THEN 1 ELSE 0 END) / 
+        SUM(CASE WHEN ORDERS_PLACED > 0 THEN 1 ELSE 0 END) AS REPEAT_RATE
+FROM DEV_DB.DBT_CORY.DIM_USERS
+;
+```
 
 #### What are good indicators of a user who will likely purchase again? What about indicators of users who are likely NOT to purchase again? If you had more data, what features would you want to look into to answer this question?
 _NOTE: This is a hypothetical question vs. something we can analyze in our Greenery data set. Think about what exploratory analysis you would do to approach this question._
