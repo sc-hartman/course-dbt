@@ -16,7 +16,7 @@ _NOTE: This is a hypothetical question vs. something we can analyze in our Green
 - I would want to explore correlation between purchases, number of sessions, session length and the price and type of products purchased.
 
 #### Explain the marts models you added. Why did you organize the models in the way you did?
-- I decided to go for an intermediate layer that focused on joining staging tables together, with some light aggregation where it made sense and leaving the more complex transformations for the marts/prod layer where business logic is likely to be more specific to a particular business vertical. This also avoids pre-aggregatiion at an early stageand having to deaggregate metrics downstream to slice them by the appropriate dimension(s).
+- I decided to go for an intermediate layer that focused on joining staging tables together, with some light aggregation where it made sense and leaving the more complex transformations for the marts/prod layer where business logic is likely to be more specific to a particular business vertical. This also avoids pre-aggregation at an early stage and having to deaggregate metrics downstream to slice them by the appropriate dimension(s).
 
 ### Tests
 #### What assumptions are you making about each model? (i.e. why are you adding each test?)
