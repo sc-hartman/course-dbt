@@ -2,4 +2,27 @@ version: 2
 
 models:
   - name: dim_users
-    description: ""
+    description: "Table containing a unique row for each user on the Greenery platform and their related attributes, enriched with summary measures/data."
+    columns:
+      - name: user_guid
+        tests:
+          - not_null
+          - unique
+      - name: user_full_name
+        tests:
+          - not_null
+      - name: user_email
+          - not_null
+          - unique
+      - name: total_page_views
+        tests:
+          - positive_values
+      - name: total_add_to_carts
+        tests:
+          - positive_values
+      - name: total_checkouts
+        tests:
+          - positive_values
+      - name: total_packages_shipped
+        tests:
+          - positive_values

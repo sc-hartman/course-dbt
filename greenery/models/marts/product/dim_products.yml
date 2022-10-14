@@ -1,0 +1,19 @@
+version: 2
+
+models:
+  - name: dim_products
+    description: "Table containing a unique row for each product on the Greenery platform and their related attributes, enriched with summary measures/data."
+    columns:
+      - name: product_guid
+        tests:
+          - not_null
+          - unique
+      - name: product_name
+        tests: 
+          - not_null
+      - name: product_price
+        tests:
+          - not_null
+      - name: current_product_inventory
+        tests:
+          - positive_values
