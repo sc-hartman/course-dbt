@@ -3,15 +3,133 @@ version: 2
 models:
   - name: src_addresses
     description: "A view containing current address information. This links to the address_guid in the src_orders and src_users views."
+    columns:
+      - name: address_guid
+        tests:
+          - not_null
+          - unique
+      - name: street_address
+        tests:
+          - not_null
+      - name: zipcode
+        tests:
+          - not_null
+      - name: state
+        tests:
+          - not_null
+      - name: country
+        tests:
+          - not_null
   - name: src_events
     description: "A view containing raw events information. This includes checkouts, packages shipped, items added to cart, and page views."
+    columns:
+      - name: event_guid
+        tests:
+          - not_null
+          - unique
+      - name: session_guid
+        tests:
+          - not_null
+      - name: user_guid
+        tests: 
+          - relationships:
+              to: ref('src_users')
+              field: user_guid
+      - name: created_at_utc
+        tests:
+          - not_null
+      - name: event_type
+        tests:
+          - not_null
   - name: src_order_items
     description: "A view containing unique order id's, products included with each order and quantity of products purchased."
+    columns:
+      - name: order_guid
+        tests: 
+          - relationships:
+              to: ref('src_orders')
+              field: order_guid
+      - name: product_guid
+        tests:
+          - relationships:
+              to: ref('src_products')
+              field: product_guid
+      - name: quantity_ordered
+        tests:
+          - not_null
+          - positive_values
   - name: src_orders
     description: "A view containing the most current information regarding each unique order, including promo id used, cost information, customer/shipping info, status, and delivery estimate(s)."
+    columns:
+      - name: order_guid
+        tests: 
+          - not_null
+          - unique
+      - name: user_guid
+        tests:
+          - relationships:
+              to: ref('src_users')
+              field: user_guid
+      - name: promo_type
+        tests: 
+          - relationships: 
+              to: ref('src_promos')
+              field: promo_type
+      - name: address_guid
+        tests: 
+          - relationships:
+              to: ref('src_addresses')
+              field: address_guid
+      - name: tracking_guid
+        tests:
+          - unique
   - name: src_products
     description: "A view containing the most current information regarding Greenery products including product name, current price, and current inventory."
+    columns:
+      - name: product_guid
+        tests:
+          - not_null
+          - unique
+      - name: product_name
+        tests:
+          - not_null
+      - name: product_price
+        tests:
+          - not_null
+          - positive_values
+      - name: product_inventory
+        tests:
+          - not_null
+          - positive_values
   - name: src_promos
     description: "A view containing information about Greenery promotions, what kind of discount is included with the promo and whether or not it is active."
+    columns: 
+      - name: promo_type
+        tests:
+          - not_null
+          - unique
+      - name: promo_discount
+        tests:
+          - not_null
+      - name: promo_status
+        tests:
+          - not_null
   - name: src_users
     description: "A view containing the most current information regarding Greenery users. This includes profile creation date, update time, name, email, link to address_guid, and phone number."
+    columns:
+      - name: user_guid
+        tests: 
+          - not_null
+          - unique
+      - name: user_email
+        tests:
+          - not_null
+          - unique
+      - name: user_created_at_utc
+        tests:
+          - not_null
+      - name: address_guid
+        tests:
+          - relationships:
+              to: ref('src_addresses')
+              field: address_guid

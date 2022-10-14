@@ -11,9 +11,6 @@ models:
       - name: user_full_name
         tests:
           - not_null
-      - name: user_email
-          - not_null
-          - unique
       - name: total_page_views
         tests:
           - positive_values

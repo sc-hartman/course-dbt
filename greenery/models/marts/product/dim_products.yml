@@ -8,12 +8,3 @@ models:
         tests:
           - not_null
           - unique
-      - name: product_name
-        tests: 
-          - not_null
-      - name: product_price
-        tests:
-          - not_null
-      - name: current_product_inventory
-        tests:
-          - positive_values

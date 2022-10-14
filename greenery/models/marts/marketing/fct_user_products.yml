@@ -4,26 +4,6 @@ models:
   - name: fct_user_products
     description: "A table containing information about the products that each Greenery user has purchased."
     columns:
-      - name: user_guid
-        tests:
-          - not_null
-      - name: order_guid
-        tests:
-          - not_null
-      - name: order_created_at_utc
-        tests:
-          - not_null
-      - name: product_guid
-        tests:
-          - not_null
-      - name: quantity_ordered
-        tests:
-          - not_null
-          - positive_values
-      - name: product_price
-        tests:
-          - not_null
-          - positive_values
       - name: product_subtotal
         tests: 
           - not_null
