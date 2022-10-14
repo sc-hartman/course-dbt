@@ -20,10 +20,15 @@ _NOTE: This is a hypothetical question vs. something we can analyze in our Green
 
 ### Tests
 #### What assumptions are you making about each model? (i.e. why are you adding each test?)
+- For some models, each row needs to have a unique identifier or Primary Key (PK), other columns contain Foreign Keys (FK) and need to have relational integrity with another source, so those relationship tests were implemented. For other columns, we wanted to ensure there were no null values for mandatory fields, only positive values were being entered where it made sense, and certain events (shipping, delivery, etc) could logically only happen after others (order creation).
 #### Did you find any "bad" data as you added and ran tests on your models? How did you go about either cleaning the data in the dbt model or adjusting your assumptions/tests?
+- The tests surprisingly did not find any bad data so far. However, I am a heavy user of `IFNULL()` and `COALESCE()` statements to safeguard against `NULL` data already and have learned hard lessons about letting bad data get through to the BI layer.
 #### Your stakeholders at Greenery want to understand the state of the data each day. Explain how you would ensure these tests are passing regularly and how you would alert stakeholders about bad data getting through.
-- Placeholder
+- I would make sure to automate either the `dbt build` or `dbt test` runs through dbt Cloud or another service, with notifications set up to trigger through email and/or Slack or another messaging service. These notifications would serve as an alert in and of themselves, but I could also conduct an investigation and follow up personally.
 
 ### dbt Snapshots
 #### Which orders changed from week 1 to week 2?
-- Placeholder
+- The following `ORDER_ID`'s went from _Preparing_ to _Shipped_ status:
+  - 914b8929-e04a-40f8-86ee-357f2be3a2a2
+  - 05202733-0e17-4726-97c2-0520c024ab85
+  - 939767ac-357a-4bec-91f8-a7b25edd46c9
