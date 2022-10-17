@@ -1,9 +1,3 @@
-{{
-    config(
-        materialized='table'
-    )
-}}
-
 WITH events AS (
     SELECT * FROM {{ ref('src_events') }}
 )

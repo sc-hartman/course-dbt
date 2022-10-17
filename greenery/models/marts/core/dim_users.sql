@@ -1,9 +1,3 @@
-{{
-    config(
-        materialized='table'
-    )
-}}
-
 WITH users AS (
     SELECT * FROM {{ ref('int_users') }}
 ),

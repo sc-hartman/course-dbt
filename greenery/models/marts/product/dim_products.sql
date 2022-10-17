@@ -1,9 +1,3 @@
-{{
-    config(
-        materialized='table'
-    )
-}}
-
 WITH products AS (
     SELECT * FROM {{ ref('src_products') }}
 ),
