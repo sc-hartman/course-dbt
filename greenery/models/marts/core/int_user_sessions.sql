@@ -9,10 +9,8 @@ SELECT  events.USER_GUID
         ,TIMESTAMPDIFF('second',SESSION_STARTED_AT_UTC,SESSION_ENDED_AT_UTC) AS SESSION_DURATION_S
         ,ROUND(SESSION_DURATION_S/60.0,2) AS SESSION_DURATION_M
         ,ROUND(SESSION_DURATION_M/60.0,2) AS SESSION_DURATION_H
-        ,SUM(CASE WHEN events.EVENT_TYPE = 'page_view' THEN 1 ELSE 0 END) AS SESSION_PAGE_VIEWS
-        ,SUM(CASE WHEN events.EVENT_TYPE = 'add_to_cart' THEN 1 ELSE 0 END) AS SESSION_ADD_TO_CARTS
-        ,SUM(CASE WHEN events.EVENT_TYPE = 'checkout' THEN 1 ELSE 0 END) AS SESSION_CHECKOUTS
-        ,SUM(CASE WHEN events.EVENT_TYPE = 'package_shipped' THEN 1 ELSE 0 END) AS SESSION_PACKAGES_SHIPPED
+        -- Create an aggregation column for each event type using dbt_utils macros
+        ,{{ dbt_utils.pivot(column='EVENT_TYPE', values=dbt_utils.get_column_values(ref('src_events'), 'EVENT_TYPE'), prefix='SESSION_', suffix='S') }}
         ,COUNT(DISTINCT events.PRODUCT_GUID) AS SESSION_DISTINCT_PRODUCTS
         ,COUNT(DISTINCT events.ORDER_GUID) AS SESSION_DISTINCT_ORDERS
 FROM events
