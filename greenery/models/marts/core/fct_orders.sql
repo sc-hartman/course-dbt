@@ -6,6 +6,7 @@ orders_products AS(
 )
 
 SELECT  orders.ORDER_GUID
+        ,orders.SESSION_GUID
         ,orders.ORDER_CREATED_AT_UTC
         ,orders.USER_GUID
         ,orders.USER_STREET_ADDRESS
@@ -35,6 +36,7 @@ SELECT  orders.ORDER_GUID
 FROM orders
 LEFT JOIN orders_products ON orders.ORDER_GUID = orders_products.ORDER_GUID
 GROUP BY    orders.ORDER_GUID
+            ,orders.SESSION_GUID
             ,orders.ORDER_CREATED_AT_UTC
             ,orders.USER_GUID
             ,orders.USER_STREET_ADDRESS
