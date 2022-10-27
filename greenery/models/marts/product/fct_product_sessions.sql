@@ -22,6 +22,7 @@ product_events AS (
             ,USER_GUID
             ,CREATED_AT_UTC
             ,EVENT_TYPE
+            ,0 AS QUANTITY_ORDERED
     FROM events
         WHERE PRODUCT_GUID IS NOT NULL
 ),
@@ -32,6 +33,7 @@ product_checkouts AS (
             ,op.USER_GUID
             ,op.ORDER_CREATED_AT_UTC AS CREATED_AT_UTC
             ,'CHECKOUT' AS EVENT_TYPE
+            ,op.QUANTITY_ORDERED
     FROM order_products AS op
     LEFT JOIN event_order_bridge AS brdg ON op.SESSION_GUID = brdg.SESSION_GUID
                                         AND op.ORDER_GUID = brdg.ORDER_GUID
@@ -57,6 +59,7 @@ SELECT  pr_events.PRODUCT_GUID
         ,pr_events.USER_GUID
         ,ss.SESSION_STARTED_AT_UTC
         ,pr_events.EVENT_TYPE
+        ,pr_events.QUANTITY_ORDERED
         ,pr_events.CREATED_AT_UTC AS EVENT_TIME_UTC
 FROM product_events_combined AS pr_events
 JOIN products ON pr_events.PRODUCT_GUID = products.PRODUCT_GUID
