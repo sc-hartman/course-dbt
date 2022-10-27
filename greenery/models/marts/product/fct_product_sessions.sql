@@ -7,33 +7,73 @@ products AS (
 order_products AS (
     SELECT * FROM {{ ref('int_orders_products') }}
 ),
-product_checkouts AS (
+event_order_bridge AS (
+    SELECT  SESSION_GUID
+            ,EVENT_GUID
+            ,ORDER_GUID
+            ,EVENT_TYPE
+    FROM events
+            WHERE ORDER_GUID IS NOT NULL
+),
+product_events AS (
     SELECT  PRODUCT_GUID
             ,SESSION_GUID
-            ,ORDER_GUID
-    FROM order_products
-            WHERE QUANTITY_ORDERED > 0
+            ,EVENT_GUID
+            ,USER_GUID
+            ,CREATED_AT_UTC
+            ,EVENT_TYPE
+    FROM events
+        WHERE PRODUCT_GUID IS NOT NULL
+),
+product_checkouts AS (
+    SELECT  op.PRODUCT_GUID
+            ,op.SESSION_GUID
+            ,brdg.EVENT_GUID
+            ,op.USER_GUID
+            ,op.ORDER_CREATED_AT_UTC AS CREATED_AT_UTC
+            ,'CHECKOUT' AS EVENT_TYPE
+    FROM order_products AS op
+    LEFT JOIN event_order_bridge AS brdg ON op.SESSION_GUID = brdg.SESSION_GUID
+                                        AND op.ORDER_GUID = brdg.ORDER_GUID
+            WHERE op.QUANTITY_ORDERED > 0
+              AND brdg.EVENT_TYPE = 'CHECKOUT'
+),
+product_events_combined AS (
+    SELECT * FROM product_events
+    UNION ALL
+    SELECT * FROM product_checkouts
+),
+session_started AS (
+    SELECT  SESSION_GUID
+            ,MIN(CREATED_AT_UTC) AS SESSION_STARTED_AT_UTC
+    FROM    events
+    GROUP BY SESSION_GUID
 )
 
-SELECT  events.PRODUCT_GUID
+SELECT  pr_events.PRODUCT_GUID
         ,products.PRODUCT_NAME
         ,products.PRODUCT_PRICE
-        ,events.SESSION_GUID
-        ,events.USER_GUID
-        ,MIN(events.CREATED_AT_UTC) AS SESSION_STARTED_AT_UTC
-        ,MIN(CASE WHEN events.EVENT_TYPE = 'PAGE_VIEW' THEN events.CREATED_AT_UTC END) AS FIRST_PRODUCT_PAGE_VIEW_UTC
-        ,COUNT(DISTINCT CASE WHEN events.EVENT_TYPE = 'PAGE_VIEW' THEN events.EVENT_GUID END) AS SESSION_PAGE_VIEWS
-        ,MIN(CASE WHEN events.EVENT_TYPE = 'ADD_TO_CART' THEN events.CREATED_AT_UTC END) AS FIRST_PRODUCT_ADD_TO_CART_UTC
-        ,COUNT(DISTINCT CASE WHEN events.EVENT_TYPE = 'ADD_TO_CART' THEN events.EVENT_GUID END) AS SESSION_ADD_TO_CARTS
-        -- need to refactor to pull in order/product info for checkouts
-        ,MIN(CASE WHEN events.EVENT_TYPE = 'CHECKOUT' AND checkouts.SESSION_GUID IS NOT NULL THEN events.CREATED_AT_UTC END) AS FIRST_CHECKOUT_UTC
-        ,COUNT(DISTINCT CASE WHEN events.EVENT_TYPE = 'CHECKOUT' AND checkouts.SESSION_GUID IS NOT NULL THEN events.EVENT_GUID END) AS SESSION_CHECKOUTS
-FROM events
-JOIN products ON events.PRODUCT_GUID = products.PRODUCT_GUID
-LEFT JOIN product_checkouts AS checkouts ON events.ORDER_GUID = checkouts.ORDER_GUID
-                                        AND events.SESSION_GUID = checkouts.SESSION_GUID
-GROUP BY    events.PRODUCT_GUID
+        ,pr_events.SESSION_GUID
+        ,pr_events.USER_GUID
+        ,ss.SESSION_STARTED_AT_UTC
+        ,pr_events.EVENT_TYPE
+        ,pr_events.CREATED_AT_UTC AS EVENT_TIME_UTC
+        /*,MIN(CASE WHEN pr_events.EVENT_TYPE = 'PAGE_VIEW' THEN pr_events.CREATED_AT_UTC ELSE NULL END) AS FIRST_PRODUCT_PAGE_VIEW_UTC
+        ,COUNT(DISTINCT CASE WHEN pr_events.EVENT_TYPE = 'PAGE_VIEW' THEN pr_events.EVENT_GUID ELSE NULL END) AS SESSION_PAGE_VIEWS
+        ,MIN(CASE WHEN pr_events.EVENT_TYPE = 'ADD_TO_CART' THEN pr_events.CREATED_AT_UTC ELSE NULL END) AS FIRST_PRODUCT_ADD_TO_CART_UTC
+        ,COUNT(DISTINCT CASE WHEN pr_events.EVENT_TYPE = 'ADD_TO_CART' THEN pr_events.EVENT_GUID ELSE NULL END) AS SESSION_ADD_TO_CARTS
+        ,MIN(CASE WHEN pr_events.EVENT_TYPE = 'CHECKOUT' THEN pr_events.CREATED_AT_UTC ELSE NULL END) AS FIRST_CHECKOUT_UTC
+        ,COUNT(DISTINCT CASE WHEN pr_events.EVENT_TYPE = 'CHECKOUT' THEN pr_events.EVENT_GUID ELSE NULL END) AS SESSION_CHECKOUTS*/
+FROM product_events_combined AS pr_events
+JOIN products ON pr_events.PRODUCT_GUID = products.PRODUCT_GUID
+LEFT JOIN session_started AS ss ON pr_events.SESSION_GUID = ss.SESSION_GUID
+ORDER BY    pr_events.SESSION_GUID
+            ,pr_events.PRODUCT_GUID
+            ,pr_events.CREATED_AT_UTC ASC
+            ,ss.SESSION_STARTED_AT_UTC ASC
+/*GROUP BY    pr_events.PRODUCT_GUID
             ,products.PRODUCT_NAME
             ,products.PRODUCT_PRICE
-            ,events.SESSION_GUID
-            ,events.USER_GUID
+            ,pr_events.SESSION_GUID
+            ,pr_events.USER_GUID
+            ,ss.SESSION_STARTED_AT_UTC*/
