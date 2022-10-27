@@ -2,4 +2,4 @@ version: 2
 
 models:
   - name: fct_product_sessions
-    description: ""
+    description: "This table contains session information for each product for analysis in the BI tool."

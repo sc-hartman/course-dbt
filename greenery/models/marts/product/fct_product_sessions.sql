@@ -58,12 +58,6 @@ SELECT  pr_events.PRODUCT_GUID
         ,ss.SESSION_STARTED_AT_UTC
         ,pr_events.EVENT_TYPE
         ,pr_events.CREATED_AT_UTC AS EVENT_TIME_UTC
-        /*,MIN(CASE WHEN pr_events.EVENT_TYPE = 'PAGE_VIEW' THEN pr_events.CREATED_AT_UTC ELSE NULL END) AS FIRST_PRODUCT_PAGE_VIEW_UTC
-        ,COUNT(DISTINCT CASE WHEN pr_events.EVENT_TYPE = 'PAGE_VIEW' THEN pr_events.EVENT_GUID ELSE NULL END) AS SESSION_PAGE_VIEWS
-        ,MIN(CASE WHEN pr_events.EVENT_TYPE = 'ADD_TO_CART' THEN pr_events.CREATED_AT_UTC ELSE NULL END) AS FIRST_PRODUCT_ADD_TO_CART_UTC
-        ,COUNT(DISTINCT CASE WHEN pr_events.EVENT_TYPE = 'ADD_TO_CART' THEN pr_events.EVENT_GUID ELSE NULL END) AS SESSION_ADD_TO_CARTS
-        ,MIN(CASE WHEN pr_events.EVENT_TYPE = 'CHECKOUT' THEN pr_events.CREATED_AT_UTC ELSE NULL END) AS FIRST_CHECKOUT_UTC
-        ,COUNT(DISTINCT CASE WHEN pr_events.EVENT_TYPE = 'CHECKOUT' THEN pr_events.EVENT_GUID ELSE NULL END) AS SESSION_CHECKOUTS*/
 FROM product_events_combined AS pr_events
 JOIN products ON pr_events.PRODUCT_GUID = products.PRODUCT_GUID
 LEFT JOIN session_started AS ss ON pr_events.SESSION_GUID = ss.SESSION_GUID
@@ -71,9 +65,3 @@ ORDER BY    pr_events.SESSION_GUID
             ,pr_events.PRODUCT_GUID
             ,pr_events.CREATED_AT_UTC ASC
             ,ss.SESSION_STARTED_AT_UTC ASC
-/*GROUP BY    pr_events.PRODUCT_GUID
-            ,products.PRODUCT_NAME
-            ,products.PRODUCT_PRICE
-            ,pr_events.SESSION_GUID
-            ,pr_events.USER_GUID
-            ,ss.SESSION_STARTED_AT_UTC*/
