@@ -11,7 +11,7 @@ Users tend to spend a lot of time browsing product pages before eventually addin
 #### Which steps in the funnel have the largest drop-off points?
 It can vary quite a bit by product, but our overall rates are as such:
 - Page View > Add to Cart: 19.2% drop-off
-- Add to Cart > Checkout > 18.34% drop-off
+- Add to Cart > Checkout: 18.34% drop-off
 
 You can see an interactive product funnel via the Sigma dashboard located [here](https://app.sigmacomputing.com/corise-dbt/workbook/workbook-5Doo7rCVrzhymeQcTpxGJO).
 
